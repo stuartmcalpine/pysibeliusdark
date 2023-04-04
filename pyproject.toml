@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools >= 61"] # PEP 621
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysibeliusdark"
+description = "Script to read HBT, Velociraptor and GALFORM data from the Sibelius-DARK simulation."
+readme = "README.md"
+requires-python = ">=3.8,<3.11"
+license = {text = "BSD 3-Clause License"}
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: BSD 3-Clause License",
+]
+dependencies = [
+    "numpy",
+    "h5py",
+    "mpi4py",
+    "scipy",
+]
+version = "0.0.1"
+authors = [
+  { name="Stuart McAlpine", email="stuart.mcalpine@fysik.su.se" },
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -57,6 +57,7 @@ class read_galform:
         self.mag_list = ["2mass", "sdss"]
         self.ivol_list = ivol_list
         self.to_convert_out_h = to_convert_out_h
+        self.num_galaxies = 0
 
         # MPI stuff.
         if comm is None:
@@ -150,16 +151,24 @@ class read_galform:
             for f in f_list:
                 f.close()
 
-        # Remove h-factor from properties.
-        if self.to_convert_out_h:
-            self._convert_out_h()
+        # Check if any galaxies were loaded.
+        tmp_keys = list(self.data.keys())
+        if len(tmp_keys) != 0:
+            self.num_galaxies = len(self.data[tmp_keys[0]])
+        if self.verbose:
+            print(f"[Rank {self.comm_rank}] loaded {self.num_galaxies} galaxies")
 
-        # Compute TrackId to match to HBT catalogue.
-        if "SubhaloID" in what_to_load and "SubhaloSnapNum" in what_to_load:
-            self.data["TrackId"] = np.zeros_like(self.data["SubhaloID"])
-            self.data["TrackId"][:] = (
-                self.data["SubhaloID"] - 1e12 * self.data["SubhaloSnapNum"]
-            )
+        if self.num_galaxies > 0:
+            # Remove h-factor from properties.
+            if self.to_convert_out_h:
+                self._convert_out_h()
+
+            # Compute TrackId to match to HBT catalogue.
+            if "SubhaloID" in what_to_load and "SubhaloSnapNum" in what_to_load:
+                self.data["TrackId"] = np.zeros_like(self.data["SubhaloID"])
+                self.data["TrackId"][:] = (
+                    self.data["SubhaloID"] - 1e12 * self.data["SubhaloSnapNum"]
+                )
 
     def gather_galaxies(self):
         """Reduce all arrays in self.data to rank 0."""
